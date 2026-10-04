@@ -22,7 +22,25 @@ def check_line_length(filepath, max_length=79):
                 })
         return issues
 
+def check_missing_docstring(filepath):
+    issues = []
+    with open(filepath, "r") as f:
+        lines = f.readlines() # reads the entire file and gives a list of lines
+
+        for i, line in enumerate(lines, start=1): # Loop through every line and track line number along with the line
+            clean_line = line.strip() 
+            if clean_line.startswith("def "):
+                    if i < len(lines): # Checks if the function definition is not the last line of the file
+                        next_line = lines[i].strip() # Get the line after "def" and remove the extra whitespaces (i is 1 based, so lines[i] points to the following line)
+                        if not next_line.startswith('"""'):
+                            issues.append({"line": i,
+                                           "type": "missing_docstring",
+                                           "message": f"Docstring is missing for the function in line {i}",
+                                           "code": clean_line
+                            })
+        return issues
+
 # TEST
-issues = check_line_length("test_files/sample.py")
+issues = check_missing_docstring("test_files/sample.py")
 for issue in issues:
     print(issue)
