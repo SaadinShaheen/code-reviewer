@@ -7,3 +7,7 @@ def this_is_a_really_loong_function_name_that_does_a_lot_of_stuff_and_has_a_line
 
 def no_docstring_function():
     print("this function has no docstring")
+
+def has_a_docstring():
+    """This function is properly documented."""
+    print("This one is fine")
