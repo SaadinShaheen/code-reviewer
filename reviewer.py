@@ -1,3 +1,13 @@
+def run_all_checks(filepath):
+    all_issues = []
+    
+    all_issues += check_line_length(filepath)
+    all_issues += check_missing_docstring(filepath)
+    all_issues += check_long_functions(filepath)
+
+    all_issues.sort(key=lambda issue: issue["line"])
+    return all_issues
+
 def check_line_length(filepath, max_length=79):
     issues = []
     with open(filepath, "r") as f:
@@ -60,12 +70,12 @@ def check_long_functions(filepath, max_lines=30):
                 issues.append({
                     "line": i,
                     "type": "long_function",
-                    "message": f"Function is  {function_line_count} lines long (over {max_lines})",
+                    "message": f"Function is {function_line_count} lines long (over {max_lines})",
                     "code": clean_line
                 })  
     return issues        
     
 # TEST
-issues = check_long_functions("test_files/sample.py")
+issues = run_all_checks("test_files/sample.py")
 for issue in issues:
     print(issue)
