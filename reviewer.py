@@ -73,9 +73,22 @@ def check_long_functions(filepath, max_lines=30):
                     "message": f"Function is {function_line_count} lines long (over {max_lines})",
                     "code": clean_line
                 })  
-    return issues        
- 
+    return issues  
+      
+def review(filepath):
+    issues = run_all_checks(filepath)
+
+    if not issues:
+        print("Code is Clean!")
+        return
+    total = len(issues)
+
+    for i, issue in enumerate(issues, start=1):
+        print(f"Issue {i} of {total} [{issue['type']}] line {issue['line']}")
+        print(f"  {issue['message']}")
+        print(f"    {issue['code']}")
+        print()
+
+
 # TEST
-issues = run_all_checks("test_files/sample.py")
-for issue in issues:
-    print(issue)
+issues = review("test_files/sample.py")
