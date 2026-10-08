@@ -89,6 +89,14 @@ def review(filepath):
         print(f"    {issue['code']}")
         print()
 
+        while True:
+            choice = input("Enter Choice [m]- Mark fixed, [s]- Skip, [i]- Ignore this type : ")
+            choice = choice.lower().strip()
+            if choice in ('m', 's', 'i'):
+                break
+            print("Invalid Input!\nPlease enter valid choice")
+
+        print(f"You chose: {choice}")
 
 # TEST
 issues = review("test_files/sample.py")
