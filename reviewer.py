@@ -1,12 +1,3 @@
-import os
-folder = "test_files"
-files = [f for f in os.listdir(folder) if f.endswith(".py")] # Get all .py files from the folder
-
-for filename in files:
-    path = os.path.join(folder, filename) # os.path.join() is used to combine folder and filename to make a valid file path
-    
-    
-    
 def check_line_length(filepath, max_length=79):
     issues = []
     with open(filepath, "r") as f:
@@ -40,7 +31,41 @@ def check_missing_docstring(filepath):
                             })
         return issues
 
+def check_long_functions(filepath, max_lines=30):
+    issues = []
+    with open(filepath, "r") as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines, start=1):
+        clean_line = line.strip()
+        if clean_line.startswith("def "):
+            def_indent = len(line) - len(line.lstrip()) # Find how much the function definition is indented
+            function_line_count = 0
+
+            j = i # j will track our position as we look ahead
+            while j <len(lines):
+                next_line = lines[j]
+                if next_line.strip() == "":
+                    j += 1
+                    continue
+
+                next_indent = len(next_line) - len(next_line.lstrip())
+                if next_indent <= def_indent:
+                    break # function has ended
+
+                function_line_count +=1
+                j += 1
+
+            if function_line_count > max_lines:
+                issues.append({
+                    "line": i,
+                    "type": "long_function",
+                    "message": f"Function is  {function_line_count} lines long (over {max_lines})",
+                    "code": clean_line
+                })  
+    return issues        
+    
 # TEST
-issues = check_missing_docstring("test_files/sample.py")
+issues = check_long_functions("test_files/sample.py")
 for issue in issues:
     print(issue)
