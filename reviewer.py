@@ -10,7 +10,7 @@ def run_all_checks(filepath):
 
 def check_line_length(filepath, max_length=79):
     issues = []
-    with open(filepath, "r") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
         for i, line in enumerate(lines, start=1):
             clean_line = line.rstrip("\n") # rstrip() removes characters from the right of a string
@@ -21,11 +21,11 @@ def check_line_length(filepath, max_length=79):
                     "message": f"Line exceeds {max_length} characters",
                     "code" : clean_line
                 })
-        return issues
+    return issues
 
 def check_missing_docstring(filepath):
     issues = []
-    with open(filepath, "r") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines() # reads the entire file and gives a list of lines
 
         for i, line in enumerate(lines, start=1): # Loop through every line and track line number along with the line
@@ -36,14 +36,14 @@ def check_missing_docstring(filepath):
                         if not next_line.startswith('"""'):
                             issues.append({"line": i,
                                            "type": "missing_docstring",
-                                           "message": f"Docstring is missing for the function in line {i}",
+                                           "message": f"Function has no docstring",
                                            "code": clean_line
                             })
-        return issues
+    return issues
 
 def check_long_functions(filepath, max_lines=30):
     issues = []
-    with open(filepath, "r") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     for i, line in enumerate(lines, start=1):
@@ -74,7 +74,7 @@ def check_long_functions(filepath, max_lines=30):
                     "code": clean_line
                 })  
     return issues        
-    
+ 
 # TEST
 issues = run_all_checks("test_files/sample.py")
 for issue in issues:
