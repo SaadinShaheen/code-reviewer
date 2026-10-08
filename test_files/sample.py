@@ -44,6 +44,8 @@ def long_function():
     line29 = "placeholder"
     line30 = "placeholder"
     line31 = "placeholder"
+
+
     line32 = "placeholder"
     line33 = "placeholder"
     line34 = "placeholder"
