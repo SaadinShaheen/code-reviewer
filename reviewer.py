@@ -83,7 +83,13 @@ def review(filepath):
         return
     total = len(issues)
 
+    skipped = 0
+    fixed = 0  
+    ignored = 0
+    ignored_types = set()
     for i, issue in enumerate(issues, start=1):
+        if issue['type'] in ignored_types:
+            continue
         print(f"Issue {i} of {total} [{issue['type']}] line {issue['line']}")
         print(f"  {issue['message']}")
         print(f"    {issue['code']}")
@@ -97,6 +103,16 @@ def review(filepath):
             print("Invalid Input!\nPlease enter valid choice")
 
         print(f"You chose: {choice}")
-
+        if choice == 'm':
+            fixed += 1
+        elif choice == 's':
+            skipped += 1
+        elif choice == 'i':
+            ignored += 1
+            ignored_types.add(issue['type'])
+    print(f"Skipped: {skipped}")
+    print(f"Fixed: {fixed}")
+    print(f"Ignored: {ignored}")
+    
 # TEST
 issues = review("test_files/sample.py")
