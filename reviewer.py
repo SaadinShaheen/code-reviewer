@@ -1,3 +1,5 @@
+import os
+import sys
 def run_all_checks(filepath):
     all_issues = []
     
@@ -119,5 +121,11 @@ def print_summary(total, fixed, skipped, ignored):
     print(f"   Skipped: {skipped}")
     print(f"   Ignored (by type): {ignored}")
     print("---------------------------")
+
 # TEST
-issues = review("test_files/sample.py")
+if len(sys.argv) < 2:
+    print(f"No file is given!\nUsage: python reviewer.py <file>")
+    sys.exit(1)
+
+filepath = sys.argv[1]
+review(filepath)
