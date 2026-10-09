@@ -110,9 +110,14 @@ def review(filepath):
         elif choice == 'i':
             ignored += 1
             ignored_types.add(issue['type'])
-    print(f"Skipped: {skipped}")
-    print(f"Fixed: {fixed}")
-    print(f"Ignored: {ignored}")
-    
+    print_summary(total, fixed, skipped, ignored)
+
+def print_summary(total, fixed, skipped, ignored):
+    print("--------- SUMMARY ---------")
+    print(f"Issues found: {total}")
+    print(f"   Marked fixed: {fixed}")
+    print(f"   Skipped: {skipped}")
+    print(f"   Ignored (by type): {ignored}")
+    print("---------------------------")
 # TEST
 issues = review("test_files/sample.py")
