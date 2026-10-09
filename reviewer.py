@@ -123,9 +123,14 @@ def print_summary(total, fixed, skipped, ignored):
     print("---------------------------")
 
 # TEST
+
 if len(sys.argv) < 2:
     print(f"No file is given!\nUsage: python reviewer.py <file>")
     sys.exit(1)
 
 filepath = sys.argv[1]
+
+if not os.path.exists(filepath):
+    print(f"The file {filepath} doesn't exist")
+    sys.exit(1)
 review(filepath)
