@@ -230,7 +230,6 @@ def save_report(filepath, decisions):
 
     print(f"Report saved to {report_path}")
 
-# TEST
 if len(sys.argv) < 2:
     print(f"No file is given!\nUsage: python reviewer.py <file>")
     sys.exit(1)
@@ -241,4 +240,15 @@ if not os.path.exists(filepath):
     print(f"The file {filepath} doesn't exist")
     sys.exit(1)
 review(filepath)
-ai_review(filepath)
+
+while True:
+    answer = input("Run AI review? [y/n]: ")
+    answer = answer.strip().lower()
+    if answer in ('y', 'n'):
+        break
+    print("Invalid Input")
+
+if answer == 'y':
+    ai_review(filepath)
+else:
+    print("Skipping AI review")
