@@ -37,7 +37,7 @@ python reviewer.py <file to review>
 - `s` skips it for now
 - `i` ignores this *type* of issue: every later issue of that type is hidden automatically
 
-Anything else is rejected and you are asked again. Input is not case-sensitive. Note that "marked fixed" only records that you fixed it yourself. The tool never edits your file.
+   Anything else is rejected and you are asked again. Input is not case-sensitive. Note that "marked fixed" only records that you fixed it yourself. The tool never edits your file.
 4. Read the summary, then check the `reports/` folder for the saved report
 
 ## Example
