@@ -117,8 +117,9 @@ def review(filepath):
         elif choice == 'i':
             ignored += 1
             ignored_types.add(issue['type'])
-    print(decisions)
+
     print_summary(total, fixed, skipped, ignored)
+    save_report(filepath, decisions)
 
 def print_summary(total, fixed, skipped, ignored):
     print("--------- SUMMARY ---------")
@@ -128,8 +129,25 @@ def print_summary(total, fixed, skipped, ignored):
     print(f"   Ignored (by type): {ignored}")
     print("---------------------------")
 
-# TEST
+def save_report(filepath, decisions):
+    labels = {"m": "Marked Fixed", "s": "Skipped", "i": "Ignored"}
 
+    os.makedirs("reports", exist_ok=True)
+    
+    base = os.path.basename(filepath)
+    clean_base = os.path.splitext(base)[0]
+    name = clean_base + "_report.txt"
+    report_path = os.path.join("reports", name) 
+
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(f"Review report for {filepath}\n")
+        f.write("-" * 30 + "\n")
+        for d in decisions:
+            f.write(f"Line {d["line"]}: {d["type"]} {labels[d["choice"]]}\n")
+
+    print(f"Report saved to {report_path}")
+
+# TEST
 if len(sys.argv) < 2:
     print(f"No file is given!\nUsage: python reviewer.py <file>")
     sys.exit(1)
