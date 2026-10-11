@@ -1,11 +1,18 @@
-import os
-import sys
-import json
-from dotenv import load_dotenv
-from groq import Groq
+import os # Import os for file and folder operations
 
+import sys # Import sys to access command-line arguments and exit the program
+
+import json # Import json to convert the AI's JSON response into Python data
+
+from dotenv import load_dotenv # Import load_dotenv to load environment variables from a .env file
+
+from groq import Groq, AuthenticationError, APIConnectionError, RateLimitError # Import Groq to connect to the Groq AI API 
+
+
+# Load environment variables from the .env file in this script's folder
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+MAX_AI_CHARS = 12000
 
 def run_all_checks(filepath):
     all_issues = []
@@ -129,6 +136,15 @@ def review(filepath):
     save_report(filepath, decisions)
 
 def ai_review(filepath):
+
+    api_key=os.getenv("GROQ_API_KEY")
+    if not api_key:
+        print(f"\nMissing API Key, Set API Key in .env file\nGROQ_API_KEY=<your_key_here>")
+        return
+    
+    # Create a Groq client using the API key stored in the environment
+    client = Groq(api_key=api_key)
+    
     with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -136,6 +152,10 @@ def ai_review(filepath):
     for n, line in enumerate(lines, start=1):
         numbered_lines.append(f"{n}: {line}")
     numbered_code = "".join(numbered_lines)
+
+    if len(numbered_code)>MAX_AI_CHARS:
+        print(f"File is too large to review. Please submit a smaller Python file.")
+        return
 
     prompt = f"""You are a Python logic-error reviewer. Analyze the code below for logical errors only, not style issues. Style is already checked by another tool.
     Look for incorrect conditions, calculations, loops, variable updates, return values, Boolean logic, off-by-one errors, and unhandled edge cases.
@@ -169,20 +189,38 @@ def ai_review(filepath):
 
     --- CODE END ---
     """
+    try:
+        # Send the prompt to the Groq API and requests and AI response
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[
+                {"role": "user",
+                "content": prompt}
+            ]
+        )
+    except AuthenticationError:
+        print("AI review failed: Invalid API key. Check your GROQ_API_KEY in the .env file.")
+        return
+    
+    except RateLimitError:
+        print("AI review falied: API rate limit reached. Please wait and try again later.")
+        return
 
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        messages=[
-            {"role": "user",
-             "content": prompt}
-        ]
-    )
+    except APIConnectionError:
+        print("AI review failed: Could not connect to the AI service. Check your internet connection and try again.")
+        return
+    
+    except Exception as e:
+        print(f"AI review failed: {type(e).__name__}")
+        return
+    
+    # Extract the AI's response text and pass it to the display function
     print_ai_results(response.choices[0].message.content)
 
 def print_ai_results(reply):
     data = {}
     try:
-        data = json.loads(reply)
+        data = json.loads(reply) # json.loads() converts JSON text into Python data
     except json.JSONDecodeError:
         print("\nThe AI reply wasn't valid JSON. Raw reply:")
         print(reply)
