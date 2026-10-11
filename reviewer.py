@@ -281,7 +281,7 @@ if not os.path.exists(filepath):
 review(filepath)
 
 while True:
-    answer = input("Run AI review? [y/n]: ")
+    answer = input("\nRun AI review? [y/n]: ")
     answer = answer.strip().lower()
     if answer in ('y', 'n'):
         break
