@@ -1,13 +1,17 @@
-import os # Import os for file and folder operations
+# Import os for file and folder operations
+import os 
 
-import sys # Import sys to access command-line arguments and exit the program
+# Import sys to access command-line arguments and exit the program
+import sys 
 
-import json # Import json to convert the AI's JSON response into Python data
+# Import json to convert the AI's JSON response into Python data
+import json 
 
-from dotenv import load_dotenv # Import load_dotenv to load environment variables from a .env file
+# Import load_dotenv to load environment variables from a .env file
+from dotenv import load_dotenv 
 
-from groq import Groq, AuthenticationError, APIConnectionError, RateLimitError # Import Groq to connect to the Groq AI API 
-
+# Import Groq to connect to the Groq AI API
+from groq import Groq, AuthenticationError, APIConnectionError, RateLimitError
 
 # Load environment variables from the .env file in this script's folder
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
@@ -52,7 +56,7 @@ def check_missing_docstring(filepath):
                         if not next_line.startswith('"""'):
                             issues.append({"line": i,
                                            "type": "missing_docstring",
-                                           "message": f"Function has no docstring",
+                                           "message": "Function has no docstring",
                                            "code": clean_line
                             })
     return issues
@@ -140,10 +144,10 @@ def ai_review(filepath):
     api_key=os.getenv("GROQ_API_KEY")
 
     if not api_key:
-        print(f"\nMissing API Key, Set API Key in .env file\nGROQ_API_KEY=<your_key_here>")
+        print("\nMissing API Key, Set API Key in .env file\nGROQ_API_KEY=<your_key_here>")
         return
     
-    # Create a Groq client using the API key using the API key
+    # Create a Groq client using the API key
     client = Groq(api_key=api_key)
     
     with open(filepath, "r", encoding="utf-8") as f:
@@ -155,7 +159,7 @@ def ai_review(filepath):
     numbered_code = "".join(numbered_lines)
 
     if len(numbered_code)>MAX_AI_CHARS:
-        print(f"File is too large to review. Please submit a smaller Python file.")
+        print("File is too large to review. Please submit a smaller Python file.")
         return
 
     prompt = f"""You are a Python logic-error reviewer. Analyze the code below for logical errors only, not style issues. Style is already checked by another tool.
@@ -191,7 +195,7 @@ def ai_review(filepath):
     --- CODE END ---
     """
     try:
-        # Send the prompt to the Groq API and requests and AI response
+        # Send the prompt to the Groq API and requests an AI response
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
             messages=[
@@ -204,7 +208,7 @@ def ai_review(filepath):
         return
     
     except RateLimitError:
-        print("AI review falied: API rate limit reached. Please wait and try again later.")
+        print("AI review failed: API rate limit reached. Please wait and try again later.")
         return
 
     except APIConnectionError:
@@ -219,7 +223,6 @@ def ai_review(filepath):
     print_ai_results(response.choices[0].message.content)
 
 def print_ai_results(reply):
-    data = {}
     try:
         data = json.loads(reply) # json.loads() converts JSON text into Python data
     except json.JSONDecodeError:
@@ -252,7 +255,7 @@ def print_summary(total, fixed, skipped, ignored):
     print("---------------------------")
 
 def save_report(filepath, decisions):
-    labels = {"m": "Marked Fixed", "s": "Skipped", "i": "Ignored"}
+    labels = {"m": "Marked fixed", "s": "Skipped", "i": "Ignored"}
 
     os.makedirs("reports", exist_ok=True)
     
@@ -270,7 +273,7 @@ def save_report(filepath, decisions):
     print(f"Report saved to {report_path}")
 
 if len(sys.argv) < 2:
-    print(f"No file is given!\nUsage: python reviewer.py <file>")
+    print("No file is given!\nUsage: python reviewer.py <file>")
     sys.exit(1)
 
 filepath = sys.argv[1]
