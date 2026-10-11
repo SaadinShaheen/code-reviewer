@@ -136,13 +136,14 @@ def review(filepath):
     save_report(filepath, decisions)
 
 def ai_review(filepath):
-
+    # Get the Groq API key from environment variables
     api_key=os.getenv("GROQ_API_KEY")
+
     if not api_key:
         print(f"\nMissing API Key, Set API Key in .env file\nGROQ_API_KEY=<your_key_here>")
         return
     
-    # Create a Groq client using the API key stored in the environment
+    # Create a Groq client using the API key using the API key
     client = Groq(api_key=api_key)
     
     with open(filepath, "r", encoding="utf-8") as f:
